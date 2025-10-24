@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 import matplotlib
 import sklearn
 
-
+#Importerer dataset
 data = pd.read_csv("../dataset_wine&food/wine_food_pairings.csv")
 
+#Velger predictors fra dataset
 predictors =[ "wine_category","food_item", "food_category", "cuisine",
              "quality_label", "description"]
 
-
+# Setter X lik læringsdata og y lik target data
 from sklearn.model_selection import train_test_split
 
 X = data[["wine_type", "food_item", "food_category", "cuisine",
@@ -30,22 +31,24 @@ ct = ColumnTransformer(
 
 X_encoded = ct.fit_transform(X)
 
+#encoder target til numerisk verdi
 from sklearn.preprocessing import LabelEncoder
 
 y_encoded = LabelEncoder().fit_transform(y)
 
 
 
-
+#splitter data inn i 25% testdata, 75% treningsdata
 X_train, X_test, y_train, y_test = train_test_split(X_encoded, y_encoded, test_size=0.25, random_state=42)
 
 
-
+#lager RFC model og trener på data
 from sklearn.ensemble import RandomForestClassifier
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
+#printer treffsikkerhetscore
 from sklearn.metrics import accuracy_score
 print(accuracy_score(y_test, y_pred))
 
