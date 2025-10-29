@@ -1,4 +1,6 @@
 # Oblig2_DAT158
 
 - Maskinlæringsmodell
-- Netside for interaktivitet med modellen
+- Nettside for interaktivitet med modellen
+
+![Logo](images/img1.png)
