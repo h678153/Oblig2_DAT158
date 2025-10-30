@@ -16,13 +16,9 @@ from sklearn.metrics import accuracy_score, classification_report
 data = pd.read_csv("../dataset_wine&food/wine_food_pairings.csv")
 
 # Sorterer data etter pairing_quality
-# Setter X lik læringsdata og y lik target data, filtrerer data så den bare bruker bra anbefalinger
+# Setter X lik læringsdata og y lik target data, filtrerer data så den bare bruker bra+ anbefalinger
 data = data[data['pairing_quality'] >= 4].copy()
 
-data = data.sort_values('pairing_quality', ascending=False).drop_duplicates(
-    subset=['food_item', 'wine_type'],
-    keep='first'
-)
 
 X = data[["food_item", "food_category"]]
 
@@ -43,6 +39,13 @@ X_train_cat, X_test_cat, y_train_cat, y_test_cat = train_test_split(
     X, y_category_encoded, test_size=0.25, random_state=42, stratify=y_category_encoded
 )
 
+#Sjekke fordeling av data pga. problemer med zero-division
+print("\nWine Category Distribution:")
+print(data['wine_category'].value_counts())
+
+print("\nWine Type Distribution:")
+print(data['wine_type'].value_counts())
+
 model_category = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
 pipe_category = Pipeline(steps=[
     ('transformer', ct),
@@ -56,7 +59,7 @@ print("WINE CATEGORY MODEL PERFORMANCE")
 print("="*50)
 print(f"Accuracy: {accuracy_score(y_test_cat, y_pred_cat):.4f}")
 print("\nClassification Report:")
-print(classification_report(y_test_cat, y_pred_cat, target_names=label_encoder_category.classes_))
+print(classification_report(y_test_cat, y_pred_cat, target_names=label_encoder_category.classes_, zero_division=0))
 
 
 y_type = data["wine_type"]
@@ -85,7 +88,7 @@ print("WINE TYPE MODEL PERFORMANCE")
 print("="*50)
 print(f"Accuracy: {accuracy_score(y_test_type, y_pred_type):.4f}")
 print("\nClassification Report:")
-print(classification_report(y_test_type, y_pred_type, target_names=label_encoder_type.classes_))
+print(classification_report(y_test_type, y_pred_type, target_names=label_encoder_type.classes_, zero_division=0))
 
 
 food_items = sorted(data["food_item"].dropna().unique().tolist())
@@ -151,3 +154,4 @@ print("="*50)
 
 recommend_wine("oysters")
 recommend_wine("Thai Curry")
+
